@@ -290,8 +290,29 @@ def bfs_initialiser(depart):
         "file", "visite", "parent", "dist", "ordre", "prochain_id",
         "courant", "termine", "trouve"
     """
-    # TODO: initialiser l'état BFS
-    raise NotImplementedError("TODO: implémenter bfs_initialiser(depart)")
+    file = deque()
+    file.append(depart)
+    visite = set()
+    visite.add(depart)
+    parent = {depart: None}
+    dist = {depart: 0}
+    ordre = {depart: 1}
+    prochain_id = 2
+    courant = None
+    termine = False
+    trouve = False
+    etat = {
+        "file": file,
+        "visite": visite,
+        "parent": parent,
+        "dist": dist,
+        "ordre": ordre,
+        "prochain_id": prochain_id,
+        "courant": courant,
+        "termine": termine,
+        "trouve": trouve,
+    }
+    return etat
 
 
 def bfs_faire_une_etape(grille, etat, arrivee):
@@ -328,8 +349,39 @@ def bfs_faire_une_etape(grille, etat, arrivee):
     Remarque :
     - BFS garantit le plus court chemin en nombre de pas (graphe non pondéré).
     """
-    # TODO: implémenter une étape BFS
-    raise NotImplementedError("TODO: implémenter bfs_faire_une_etape(grille, etat, arrivee)")
+    if etat['termine']:
+        return
+
+    file = etat['file']
+    visite = etat['visite']
+    parent = etat['parent']
+    dist = etat['dist']
+    ordre = etat['ordre']
+
+    if len(file) == 0:
+        etat['termine'] = True
+        etat['trouve'] = False
+        etat['courant'] = None
+        return
+
+    courant = file.popleft()
+    etat['courant'] = courant
+
+    if courant == arrivee:
+        etat['termine'] = True
+        etat['trouve'] = True
+        return
+
+    r, c = courant
+    for rr, cc, nom in voisins_4(grille, r, c):
+        nxt = (rr, cc)
+        if nxt not in visite:
+            visite.add(nxt)
+            parent[nxt] = courant
+            dist[nxt] = dist[courant] + 1
+            ordre[nxt] = etat['prochain_id']
+            etat['prochain_id'] = etat['prochain_id'] + 1
+            file.append(nxt)
 
 
 def bfs_reconstruire_chemin(parent, depart, arrivee):
@@ -343,8 +395,17 @@ def bfs_reconstruire_chemin(parent, depart, arrivee):
     - Vérifier que chemin[0] == depart, sinon None
     - Retourner le chemin
     """
-    # TODO: reconstruire le chemin via les parents
-    raise NotImplementedError("TODO: implémenter bfs_reconstruire_chemin(parent, depart, arrivee)")
+    if arrivee not in parent:
+        return None
+    chemin = []
+    cur = arrivee
+    while cur is not None:
+        chemin.append(cur)
+        cur = parent[cur]
+    chemin.reverse()
+    if chemin[0] != depart:
+        return None
+    return chemin
 
 
 def bfs_cout_optimal(dist, arrivee):
@@ -354,8 +415,10 @@ def bfs_cout_optimal(dist, arrivee):
     TODO :
     - Retourner dist[arrivee] si présent, sinon None
     """
-    # TODO: retourner la distance optimale
-    raise NotImplementedError("TODO: implémenter bfs_cout_optimal(dist, arrivee)")
+    if arrivee in dist:
+        return dist[arrivee]
+    else:
+        return None
 
 
 # ============================================================
@@ -394,8 +457,28 @@ def dfs_initialiser(depart):
     - Retourner un dict état contenant ces champs
       (clé "file" pour la pile, pour compatibilité UI)
     """
-    # TODO: initialiser l'état DFS
-    raise NotImplementedError("TODO: implémenter dfs_initialiser(depart)")
+    pile = [depart]
+    visite = set()
+    visite.add(depart)
+    parent = {depart: None}
+    dist = {depart: 0}
+    ordre = {depart: 1}
+    prochain_id = 2
+    courant = None
+    termine = False
+    trouve = False
+    etat = {
+        "file": pile,
+        "visite": visite,
+        "parent": parent,
+        "dist": dist,
+        "ordre": ordre,
+        "prochain_id": prochain_id,
+        "courant": courant,
+        "termine": termine,
+        "trouve": trouve,
+    }
+    return etat
 
 
 def dfs_faire_une_etape(grille, etat, arrivee):
@@ -436,8 +519,41 @@ def dfs_faire_une_etape(grille, etat, arrivee):
            - ordre[nxt] = prochain_id ; prochain_id += 1
            - empiler nxt dans la pile
     """
-    # TODO: implémenter une étape DFS
-    raise NotImplementedError("TODO: implémenter dfs_faire_une_etape(grille, etat, arrivee)")
+    if etat['termine']:
+        return
+
+    pile = etat['file']
+    visite = etat['visite']
+    parent = etat['parent']
+    dist = etat['dist']
+    ordre = etat['ordre']
+
+    if len(pile) == 0:
+        etat['termine'] = True
+        etat['trouve'] = False
+        etat['courant'] = None
+        return
+
+    courant = pile.pop()
+    etat['courant'] = courant
+
+    if courant == arrivee:
+        etat['termine'] = True
+        etat['trouve'] = True
+        return
+
+    r, c = courant
+    voisins = list(voisins_4(grille, r, c))
+    voisins.reverse()
+    for rr, cc, nom in voisins:
+        nxt = (rr, cc)
+        if nxt not in visite:
+            visite.add(nxt)
+            parent[nxt] = courant
+            dist[nxt] = dist[courant] + 1
+            ordre[nxt] = etat['prochain_id']
+            etat['prochain_id'] = etat['prochain_id'] + 1
+            pile.append(nxt)
 
 # ============================================================
 # 5) PINGOUIN (SPRITES DESSINÉS)

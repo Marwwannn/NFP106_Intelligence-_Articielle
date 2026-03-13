@@ -732,51 +732,19 @@ class AppliUCS:
             raise ValueError("Le labyrinthe doit contenir S et E")
 
         # ------------------------------------------------------------
-        # COÛTS PAR CASE
+        # COÛTS PAR CASE — Phase 1 : coûts aléatoires [1..9]
         # ------------------------------------------------------------
-        # Choisir la PHASE active (1, 2 ou 3) :
-        PHASE_COUT = 3
-
         self.couts = {}
-        col_arrivee = self.sortie[1]
-
-        if PHASE_COUT == 1:
-            # Phase 1 : coûts aléatoires [1..9]
-            rng = random.Random(42)
-            for r in range(self.lignes):
-                for c in range(self.colonnes):
-                    if est_traversable(grille, r, c):
-                        pos = (r, c)
-                        ch = grille[r][c]
-                        if ch in ("S", "E"):
-                            self.couts[pos] = 1
-                        else:
-                            self.couts[pos] = rng.randint(1, 9)
-
-        elif PHASE_COUT == 2:
-            # Phase 2 : coût = distance en colonnes vers l'arrivée
-            for r in range(self.lignes):
-                for c in range(self.colonnes):
-                    if est_traversable(grille, r, c):
-                        pos = (r, c)
-                        ch = grille[r][c]
-                        if ch in ("S", "E"):
-                            self.couts[pos] = 1
-                        else:
-                            self.couts[pos] = max(1, abs(c - col_arrivee))
-
-        else:
-            # Phase 3 : coût = distance Manhattan vers l'arrivée
-            lig_arrivee = self.sortie[0]
-            for r in range(self.lignes):
-                for c in range(self.colonnes):
-                    if est_traversable(grille, r, c):
-                        pos = (r, c)
-                        ch = grille[r][c]
-                        if ch in ("S", "E"):
-                            self.couts[pos] = 1
-                        else:
-                            self.couts[pos] = max(1, abs(r - lig_arrivee) + abs(c - col_arrivee))
+        rng = random.Random(42)
+        for r in range(self.lignes):
+            for c in range(self.colonnes):
+                if est_traversable(grille, r, c):
+                    pos = (r, c)
+                    ch = grille[r][c]
+                    if ch in ("S", "E"):
+                        self.couts[pos] = 1
+                    else:
+                        self.couts[pos] = rng.randint(1, 9)
 
         self.largeur_monde = self.colonnes * TAILLE_CASE
         self.hauteur_monde = self.lignes * TAILLE_CASE

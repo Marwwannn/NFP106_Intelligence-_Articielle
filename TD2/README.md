@@ -41,4 +41,7 @@ L'A* standard est le plus lent des trois car il explore plus de cases pour garan
 - Faut trouver la bonne valeur de w
 
 ## Question 3 : Proposez une recherche informée plus optimale dans le cas du labyrinthe
+La meilleur recherche informé pour un labyrinthe serait **A* avec une heuristique precalculée par Dijkstra**.
+L'idée c'est de lancer un **Dijkstra depuis la sortie** avant de commencer A*. Ca nous donne le vrai cout optimal de chaque case vers la sortie, en tenant compte des mur et des cout different (entre 1 et 4). Ensuite on utilise ces distance comme heuristique h dans A*.
 
+Comme h est exacte, A* va directement vers la solution sans explorer de case inutile, tout en gardant un chemin optimale. C'est la combinaison la plus efficace : optimal + rapide.
